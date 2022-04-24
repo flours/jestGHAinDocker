@@ -1,0 +1,20 @@
+name: 'coverage'
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+      - name: build container
+        run: docker build -t build-image . --file Dockerfile
+      - name: create tmp
+        run: echo "" > ./report.json
+      - uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          test-script: docker run --volume $GITHUB_WORKSPACE/report.json:/home/user/src/report.json --entrypoint="npm" build-image run test:coverage
