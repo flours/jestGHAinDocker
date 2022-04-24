@@ -9,5 +9,5 @@ var server = app.listen(3000, function(){
 
 // 写真リストを取得するAPI
 app.get("/hello", function(req, res, next){
-    res.send("hello",200);
+    res.send("hello world",200);
 });
