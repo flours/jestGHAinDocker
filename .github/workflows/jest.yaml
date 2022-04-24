@@ -13,8 +13,12 @@ jobs:
       - name: build container
         run: docker build -t build-image . --file Dockerfile
       - name: create tmp
-        run: echo "" > ./report.json
+        run: echo "" > /tmp/report.json
+      - name: execute test
+        run: docker run --volume /tmp/report.json:/home/user/src/report.json --entrypoint="npm" build-image run test:coverage
       - uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-script: docker run --volume $GITHUB_WORKSPACE/report.json:/home/user/src/report.json --entrypoint="npm" build-image run test:coverage
+          working-directory: /tmp
+          coverage-file: /tmp/report.json
+          skip-step: all
